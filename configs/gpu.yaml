@@ -1,0 +1,58 @@
+# GPU Training Configuration for CosmicML-Biodetect
+# Use this config for NVIDIA GPU systems (recommended)
+
+device: cuda
+seed: 42
+
+# Data Configuration
+data:
+  input_dim: 512  # Number of wavelength bins
+  output_dim: 10  # Number of atmospheric species
+  latent_dim: 64  # Latent space dimension
+  batch_size: 64
+  num_workers: 4
+  pin_memory: true
+  prefetch_factor: 2
+
+# Model Configuration
+model:
+  architecture: pinn
+  hidden_layers: [256, 128, 64]
+  activation: relu
+  dropout: 0.1
+  physics_weight: 1.0
+
+# Training Configuration
+training:
+  epochs: 100
+  learning_rate: 0.001
+  optimizer: adam
+  weight_decay: 0.0001
+  scheduler: cosine  # cosine, step, or none
+  scheduler_params:
+    T_max: 100
+    eta_min: 1.0e-6
+
+# Validation & Checkpointing
+validation:
+  val_split: 0.1
+  val_interval: 5  # Check every N epochs
+  patience: 20  # Early stopping patience
+  save_best_only: true
+
+# Logging
+logging:
+  log_interval: 100  # Log every N batches
+  save_dir: models/
+  tensorboard: true
+  wandb: false  # Set to true to log to Weights & Biases
+
+# Mixed Precision Training (faster on modern GPUs)
+mixed_precision: true
+accumulation_steps: 1
+
+# GPU-specific optimizations
+gpu_optimization:
+  cudnn_benchmark: true
+  cudnn_deterministic: false
+  compile_model: false  # torch.compile() if available

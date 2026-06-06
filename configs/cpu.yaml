@@ -1,0 +1,57 @@
+# CPU-only Training Configuration
+# Use this config if NVIDIA GPU is not available (slower but still functional)
+
+device: cpu
+seed: 42
+
+# Data Configuration
+data:
+  input_dim: 512
+  output_dim: 10
+  latent_dim: 64
+  batch_size: 8  # Smaller batches for CPU
+  num_workers: 1  # Single worker for stability on CPU
+  pin_memory: false
+  prefetch_factor: 1
+
+# Model Configuration
+model:
+  architecture: pinn
+  hidden_layers: [256, 128, 64]
+  activation: relu
+  dropout: 0.1
+  physics_weight: 1.0
+
+# Training Configuration
+training:
+  epochs: 100  # More epochs for convergence
+  learning_rate: 0.001
+  optimizer: adam
+  weight_decay: 0.0001
+  scheduler: cosine  # Better convergence pattern
+  scheduler_params:
+    T_max: 100
+    eta_min: 1.0e-6
+
+# Validation & Checkpointing
+validation:
+  val_split: 0.1
+  val_interval: 5
+  patience: 25  # Allow more patience for convergence
+  save_best_only: true
+
+# Logging
+logging:
+  log_interval: 50  # Log less frequently
+  save_dir: models/
+  tensorboard: false
+  wandb: false
+
+# CPU doesn't benefit from mixed precision
+mixed_precision: false
+accumulation_steps: 4  # Use gradient accumulation for stable training
+
+# CPU-specific settings
+cpu_optimization:
+  num_threads: 4  # Adjust based on your CPU cores
+  mkldnn: true
