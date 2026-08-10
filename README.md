@@ -189,3 +189,7 @@ MIT License - see [LICENSE](LICENSE) for details
 **Last Updated:** 2024  
 **Status:** Active Development  
 **Collaboration:** Open to partnerships with astronomy groups and ML researchers
+
+## Research Quality Upgrade
+
+See [RESEARCH_QUALITY.md](RESEARCH_QUALITY.md) for the validation layer, reference anchors, equations and research boundaries added to this repository.
