@@ -1,0 +1,75 @@
+{
+  "benchmark": "analytic template-amplitude recovery",
+  "scope": "synthetic emulator only; not observed-data biosignature detection",
+  "seed": 20260927,
+  "n_families": 360,
+  "replicates_averaged_per_family": 4,
+  "per_replicate_noise_sigma": 6e-05,
+  "split_counts": {
+    "train": 180,
+    "tune": 72,
+    "calibration": 54,
+    "test": 54
+  },
+  "split_overlap_count": 0,
+  "selected_ridge_alpha": 10.0,
+  "tune_mae_by_alpha": {
+    "0.001": 0.023134913162293803,
+    "0.01": 0.022770154676247018,
+    "0.1": 0.020502696539617067,
+    "1.0": 0.016028745780377433,
+    "10.0": 0.015907121186042393
+  },
+  "interval_target_coverage": 0.9,
+  "species_metrics": [
+    {
+      "species": "H2O",
+      "test_mae": 0.008022448009406267,
+      "test_r2": 0.9980762331513352,
+      "mean_baseline_mae": 0.2036323946343499,
+      "permuted_label_mae": 0.2251099280953193,
+      "conformal_half_width": 0.020230004294074677,
+      "test_interval_coverage": 0.9444444444444444
+    },
+    {
+      "species": "CO2",
+      "test_mae": 0.009090667767352364,
+      "test_r2": 0.9981392309876619,
+      "mean_baseline_mae": 0.23337570633428456,
+      "permuted_label_mae": 0.24672090669913227,
+      "conformal_half_width": 0.023831437798092603,
+      "test_interval_coverage": 0.9444444444444444
+    },
+    {
+      "species": "O2",
+      "test_mae": 0.02426614136595334,
+      "test_r2": 0.9835171387826325,
+      "mean_baseline_mae": 0.19917520775749592,
+      "permuted_label_mae": 0.20446855854959622,
+      "conformal_half_width": 0.05327945523501215,
+      "test_interval_coverage": 0.9444444444444444
+    },
+    {
+      "species": "O3",
+      "test_mae": 0.016297416329271366,
+      "test_r2": 0.9931004295283979,
+      "mean_baseline_mae": 0.1899645622401792,
+      "permuted_label_mae": 0.1931800233036813,
+      "conformal_half_width": 0.03546296320646697,
+      "test_interval_coverage": 0.9444444444444444
+    },
+    {
+      "species": "CH4",
+      "test_mae": 0.011061437027776767,
+      "test_r2": 0.9970524552539748,
+      "mean_baseline_mae": 0.2161505454400988,
+      "permuted_label_mae": 0.2481214255836954,
+      "conformal_half_width": 0.025462805518045584,
+      "test_interval_coverage": 0.9259259259259259
+    }
+  ],
+  "macro_test_mae": 0.013747622099952023,
+  "macro_mean_baseline_mae": 0.20845968328128167,
+  "macro_permuted_label_mae": 0.22352016844628492,
+  "macro_test_interval_coverage": 0.9407407407407408
+}

@@ -1,3 +1,7 @@
+# Legacy PINN prototype dependencies. For the validated CPU benchmark, install
+# requirements-benchmark.txt instead. These modules are not observationally
+# validated and are not exercised by the primary evidence workflow.
+
 # Core dependencies
 numpy>=1.21.0
 scipy>=1.7.0

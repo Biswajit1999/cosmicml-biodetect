@@ -25,16 +25,14 @@ class JWSTDataPipeline:
         Returns:
             Dict with wavelengths, flux, uncertainties
         """
-        # Placeholder for FITS file reading (would use astropy)
-        return {
-            "wavelengths": np.linspace(0.3, 5.0, 512),
-            "transit_depth": np.ones(512) * 0.01,
-            "uncertainties": np.ones(512) * 0.0001,
-        }
+        raise NotImplementedError(
+            "JWST FITS ingestion and provenance validation are not implemented. "
+            "No synthetic spectrum is substituted for an observation."
+        )
 
     def calibrate_wavelengths(self, wavelengths: np.ndarray) -> np.ndarray:
         """Calibrate wavelength scale."""
-        return wavelengths
+        raise NotImplementedError("Wavelength calibration is not implemented.")
 
     def remove_systematics(
         self,
@@ -42,4 +40,4 @@ class JWSTDataPipeline:
         uncertainties: np.ndarray,
     ) -> np.ndarray:
         """Remove instrumental systematics using GP or polynomial fitting."""
-        return spectrum
+        raise NotImplementedError("Instrument-systematics removal is not implemented.")

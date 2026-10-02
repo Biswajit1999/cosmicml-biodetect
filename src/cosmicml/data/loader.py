@@ -23,8 +23,10 @@ class DataLoader:
         Returns:
             Tuple of (spectra, compositions)
         """
-        # Placeholder for HDF5 data loading
-        return np.zeros((1000, 512)), np.zeros((1000, 32))
+        raise NotImplementedError(
+            "No synthetic dataset is bundled. Use cosmicml.benchmark for the "
+            "validated emulator workflow or implement an explicit HDF5 schema."
+        )
 
     def load_jwst_data(self, planet_name: str) -> Dict:
         """
@@ -36,9 +38,7 @@ class DataLoader:
         Returns:
             Dict with spectrum, uncertainties, metadata
         """
-        return {
-            "wavelengths": np.linspace(0.3, 5.0, 512),
-            "spectrum": np.ones(512),
-            "uncertainties": np.ones(512) * 0.0001,
-            "metadata": {},
-        }
+        raise NotImplementedError(
+            "Observed JWST ingestion is not implemented; this method must not "
+            "return fabricated arrays."
+        )

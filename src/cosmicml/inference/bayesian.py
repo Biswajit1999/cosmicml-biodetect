@@ -42,13 +42,10 @@ class BayesianInference:
         Returns:
             Dict with posterior samples and statistics
         """
-        # Placeholder for MCMC implementation (would use pymc)
-        return {
-            "samples": np.zeros((n_samples - n_burn, 32)),
-            "mean": np.zeros(32),
-            "std": np.zeros(32),
-            "credible_intervals": np.zeros((32, 2)),
-        }
+        raise NotImplementedError(
+            "MCMC posterior sampling has not been implemented or calibrated. "
+            "Returning zero-filled pseudo-posteriors is scientifically invalid."
+        )
 
     def compute_biosignature_probabilities(
         self,

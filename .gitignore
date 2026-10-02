@@ -88,3 +88,13 @@ Thumbs.db
 *.tmp
 *.temp
 *__pycache__*
+
+# Versioned benchmark evidence
+!results/
+!results/synthetic_benchmark.json
+!results/species_metrics.csv
+!results/noise_sensitivity.csv
+!results/synthetic_benchmark.png
+!results/wasp39b_real_spectrum_summary.json
+!results/wasp39b_block_deletions.csv
+!results/wasp39b_real_spectrum.png
