@@ -33,9 +33,11 @@ for forbidden in (
 
 for removed in (
     "MAJOR_UPGRADE_STATUS.md",
+    "RESEARCH_QUALITY.md",
     "RESEARCH_UPGRADE_PLAN.md",
     "UPGRADE_PROGRESS.md",
     "paper/RESEARCH_PAPER.md",
+    "scripts/validate_repository.mjs",
 ):
     require(not (ROOT / removed).exists(), f"superseded claim artifact remains: {removed}")
 
