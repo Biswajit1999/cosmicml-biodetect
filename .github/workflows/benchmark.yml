@@ -1,0 +1,38 @@
+name: validate synthetic benchmark
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install benchmark dependencies
+        run: python -m pip install -r requirements-benchmark.txt -e .
+      - name: Lint maintained evidence path
+        run: >-
+          ruff check src/cosmicml/benchmark.py scripts/run_synthetic_benchmark.py
+          scripts/analyze_wasp39b_real_spectrum.py scripts/validate_repository.py
+          tests/test_benchmark.py tests/test_fail_closed_interfaces.py
+      - name: Test benchmark protocol and fail-closed interfaces
+        run: >-
+          python -m pytest -q tests/test_benchmark.py
+          tests/test_fail_closed_interfaces.py
+      - name: Regenerate and validate evidence
+        run: |
+          python scripts/run_synthetic_benchmark.py
+          python scripts/analyze_wasp39b_real_spectrum.py
+          python scripts/validate_repository.py
