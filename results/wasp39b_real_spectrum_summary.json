@@ -1,0 +1,19 @@
+{
+  "dataset": "WASP-39 b EUREKA JWST NIRSpec PRISM transmission spectrum",
+  "archive_doi": "10.5281/zenodo.6959427",
+  "comparison_scope": "supplied model sensitivity audit; not an independent retrieval",
+  "n_observed_bins": 94,
+  "n_common_model_bins": 93,
+  "wavelength_min_um": 3.032,
+  "wavelength_max_um": 5.288,
+  "fitted_offset_full_depth_fraction": -6.271232409044794e-05,
+  "fitted_offset_no_co2_depth_fraction": 5.596471200679555e-05,
+  "chi2_flat": 1080.7936637011992,
+  "chi2_full_supplied_model": 179.18637534896152,
+  "chi2_no_co2_supplied_model": 953.5895298883135,
+  "delta_chi2_no_co2_minus_full": 774.4031545393519,
+  "delta_chi2_from_4p0_to_4p6_um": 680.8712781227853,
+  "block_deletion_delta_chi2_min": 37.19374547631671,
+  "block_deletion_delta_chi2_max": 779.0857136840951,
+  "interpretation": "Within the publication-supplied model pair, the full curve is preferred. This re-analysis does not reproduce the atmospheric retrieval or detection significance."
+}

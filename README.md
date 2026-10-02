@@ -1,195 +1,149 @@
-# CosmicML-Biodetect: Physics-Informed Neural Networks for Exoplanet Biosignature Detection
+# CosmicML-Biodetect
 
-[![Tests Status](https://img.shields.io/badge/tests-41%2F41%20passing-brightgreen)](./tests)
-[![Code Coverage](https://img.shields.io/badge/coverage-71%25-brightgreen)](./tests)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue)](https://www.python.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-orange)](https://pytorch.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+An explicitly synthetic benchmark for asking a limited inverse-problem
+question: **can a regularized linear model recover five injected molecular
+feature amplitudes from a declared analytic spectral emulator?**
 
-## About
+This repository does **not** currently demonstrate biosignature detection in
+JWST, HST, Keck, or any other observed spectrum. It does not estimate a
+probability of life. The legacy neural-network and retrieval modules remain
+experimental prototypes; placeholder loaders and samplers are not part of the
+validated benchmark.
 
-CosmicML-Biodetect is a machine learning framework for analyzing exoplanet atmospheres using transmission spectroscopy data. It implements Physics-Informed Neural Networks (PINNs) that enforce atmospheric physics constraints during training, enabling detection of biosignature gases (O₂, CH₄, O₃) from spectroscopic observations. The framework includes a radiative transfer simulator for generating training data, chemistry models for atmospheric composition, and uncertainty quantification via Bayesian inference. Designed for JWST and other space-based spectrometers.
+## Reproduced benchmark
 
-## Overview
+The fixed-seed experiment generates 360 latent atmosphere families. Four noise
+realizations are averaged within each family, then families—not individual
+realizations—are assigned to four disjoint partitions:
 
-CosmicML-Biodetect combines Physics-Informed Neural Networks (PINNs) with Bayesian inference to analyze atmospheric composition from exoplanet transmission spectroscopy data. The framework incorporates atmospheric chemistry and radiative transfer physics directly into neural network training, enabling analysis of spectroscopic observations from JWST, Keck, and HST.
+| Partition | Families | Purpose |
+|---|---:|---|
+| Train | 180 | Fit ridge coefficients |
+| Tune | 72 | Select regularization strength |
+| Calibration | 54 | Calibrate 90% split-conformal intervals |
+| Test | 54 | Final metrics only |
 
-## Approach
+At the prespecified per-replicate noise scale of `6e-5`, the held-out macro MAE
+is **0.01375** in injected amplitude units. The training-mean baseline gives
+**0.20846**, and the permuted-label negative control gives **0.22352**. The
+empirical test coverage of the nominal 90% intervals is **0.9407**. These
+numbers measure recovery from the same analytic template family used to create
+the data; they are not evidence of observed-data validity.
 
-The framework uses transmission spectroscopy to infer atmospheric composition. Biosignature gases like oxygen, methane, and ozone are detected by analyzing absorption features in stellar light passing through exoplanet atmospheres. Physics-informed neural networks enforce physical constraints during inference rather than purely data-driven prediction.
+![Synthetic benchmark: recovery, interval coverage, and noise sensitivity](results/synthetic_benchmark.png)
 
-## Core Components
+Machine-readable artifacts:
 
-- **Physics-Informed Neural Networks (PINNs)**: Combines deep learning with constraint enforcement for physical systems
-- **Atmospheric Simulation Engine**: Generates synthetic spectral data using radiative transfer and chemistry models
-- **Bayesian Inference Pipeline**: Quantifies uncertainty in composition estimates
-- **Real Data Integration**: Compatible with JWST, Keck, and HST observational data formats
-- **GPU Support**: Optimized for distributed training on compute clusters
+- [`synthetic_benchmark.json`](results/synthetic_benchmark.json)
+- [`species_metrics.csv`](results/species_metrics.csv)
+- [`noise_sensitivity.csv`](results/noise_sensitivity.csv)
+- [`MODEL_CARD.md`](MODEL_CARD.md)
 
-## Installation
+## Published JWST spectrum audit
 
-### Requirements
-- Python 3.9+
-- PyTorch 2.0+
-- GPU support (NVIDIA CUDA recommended)
-- 16GB+ RAM for training
+A separate, deliberately descriptive audit uses the published WASP-39 b
+JWST/NIRSpec PRISM transmission spectrum and the full and “remove CO2”
+ScCHIMERA curves deposited by the JWST Transiting Exoplanet Community Early
+Release Science Team at
+[Zenodo (10.5281/zenodo.6959427)](https://doi.org/10.5281/zenodo.6959427).
+Exact archive entries and LF-normalized file hashes are recorded in
+[`data/real/SOURCE.md`](data/real/SOURCE.md).
 
-### Quick Start
+After fitting one weighted vertical offset per supplied model, 93 common bins
+give chi-squared values of **179.19** for the full curve and **953.59** for the
+remove-CO2 curve, a descriptive difference of **774.40**. The 4.0–4.6 μm
+region contributes **680.87** of that difference. Eight contiguous-block
+deletions leave differences from **37.19** to **779.09**, making the wavelength
+dependence visible rather than hiding it behind one aggregate number.
+
+![Published WASP-39 b spectrum and supplied-model residual audit](results/wasp39b_real_spectrum.png)
+
+This is a reproduction check on one publication-supplied data/model pair. It
+is **not** a new atmospheric retrieval, a likelihood-ratio detection
+significance, or evidence that the synthetic ridge benchmark works on JWST
+observations. Machine-readable outputs are
+[`wasp39b_real_spectrum_summary.json`](results/wasp39b_real_spectrum_summary.json)
+and [`wasp39b_block_deletions.csv`](results/wasp39b_block_deletions.csv).
+
+## Scientific design
+
+1. Five normalized analytic feature templates represent H2O, CO2, O2, O3,
+   and CH4 bands over 0.5–5.0 μm.
+2. Each latent family has injected amplitudes, a nuisance continuum, and four
+   independent Gaussian-noise realizations.
+3. Replicates are averaged before splitting, preventing the same latent
+   atmosphere from appearing in multiple partitions.
+4. Ridge regularization is selected on the tune partition.
+5. The model is refit on train+tune. The untouched calibration partition sets
+   finite-sample conformal half-widths; the test partition is used once.
+6. Mean-prediction and permuted-label controls test whether the model extracts
+   more information than class prevalence or accidental fitting.
+7. A four-level noise sweep reports sensitivity rather than one preferred
+   operating point.
+
+The generator is intentionally simple and inspectable. It is not a line-by-
+line radiative-transfer model: the injected targets are dimensionless template
+amplitudes, not retrieved volume-mixing ratios.
+
+## Run it
 
 ```bash
-git clone https://github.com/Biswajit1999/cosmicml-biodetect.git
-cd cosmicml-biodetect
-pip install -r requirements.txt
-python -m pytest tests/  # Verify installation
+python -m pip install -r requirements-benchmark.txt
+python scripts/run_synthetic_benchmark.py
+python scripts/analyze_wasp39b_real_spectrum.py
+python -m pytest -q tests/test_benchmark.py --no-cov
 ```
 
-See [GETTING_STARTED.md](docs/getting_started.md) for detailed setup instructions.
+The synthetic script overwrites its four declared files in `results/`; the
+WASP-39 b audit overwrites its three declared outputs. With the same dependency
+family and seeds, reruns are deterministic.
 
-## Project Structure
+## Repository status
 
-```
-cosmicml-biodetect/
-├── src/cosmicml/              # Core library
-│   ├── models/                # PINN architectures
-│   ├── atmosphere/            # Atmospheric simulation
-│   ├── inference/             # Bayesian inference
-│   ├── data/                  # Data loading & preprocessing
-│   └── utils/                 # Utilities
-├── notebooks/                 # Jupyter notebooks for learning
-├── scripts/                   # Executable Python scripts
-├── data/                      # Data storage
-│   ├── raw/                   # Real observational data
-│   ├── processed/             # Cleaned data
-│   └── simulated/             # Synthetic atmospheres
-├── docs/                      # Documentation
-├── tests/                     # Unit & integration tests
-├── configs/                   # Configuration files
-└── models/                    # Trained model checkpoints
-```
+| Area | Status |
+|---|---|
+| Synthetic template benchmark | Validated and reproduced in CI |
+| Family-level leakage control | Implemented |
+| Negative control | Implemented |
+| Split-conformal intervals | Implemented for emulator-distribution coverage |
+| Noise sensitivity | Implemented at four declared scales |
+| Published WASP-39 b audit | Reproduced from DOI-pinned text products |
+| Neural-network/PINN modules | Experimental, not benchmarked here |
+| Bayesian retrieval | Placeholder; not a functioning MCMC analysis |
+| JWST loader/systematics model | Placeholder; not validated on mission data |
+| Biosignature or life detection | Not supported |
 
-## Quick Start: Running the Pipeline
+The checkpoint files from the original prototype were removed from the current
+tree because they lacked a reconstructable dataset split, environment lock,
+training log, and independent evaluation record. They remain recoverable from
+Git history.
 
-### 1. Generate Synthetic Training Data
-```bash
-python scripts/generate_synthetic_data.py \
-  --num_atmospheres 10000 \
-  --output_dir data/simulated/
-```
+## Scope for a future observational study
 
-### 2. Train the PINN Model
-```bash
-python scripts/train_pinn.py \
-  --config configs/gpu.yaml \
-  --data_dir data/simulated/ \
-  --output_dir models/
-```
+Moving beyond this emulator would require, at minimum:
 
-### 3. Analyze Real Exoplanet Spectra
-```bash
-python scripts/predict_biosignatures.py \
-  --model models/pinn_trained.pt \
-  --spectra data/raw/jwst_observations.fits \
-  --output results/detections.json
-```
-
-See notebooks for interactive tutorials.
-
-## Documentation
-
-- **[Theory & Methodology](docs/theory.md)** - Deep dive into PINNs, atmospheric chemistry, and Bayesian inference
-- **[Getting Started](docs/getting_started.md)** - Installation, environment setup, and first experiments
-- **[API Reference](docs/api_reference.md)** - Complete module documentation
-- **[Research Brief](../CosmicML_Biodetect_Research_Brief.docx)** - Comprehensive introduction for beginners
-
-## Jupyter Notebooks
-
-Interactive learning guides:
-
-1. **[01_Introduction.ipynb](notebooks/01_introduction.ipynb)** - Overview of exoplanet atmospheres and biosignatures
-2. **[02_Data_Exploration.ipynb](notebooks/02_data_exploration.ipynb)** - Visualizing spectral data
-3. **[03_PINN_Training.ipynb](notebooks/03_pinn_training.ipynb)** - Building and training a PINN model
-4. **[04_Biosignature_Detection.ipynb](notebooks/04_biosignature_detection.ipynb)** - Bayesian inference for life detection
-5. **[05_JWST_Analysis.ipynb](notebooks/05_jwst_analysis.ipynb)** - Real observations from James Webb
-
-## Core Modules
-
-### `cosmicml.atmosphere`
-Simulates exoplanet atmospheres under various conditions:
-- **Radiative transfer calculations** for spectral generation
-- **Chemical kinetics** for reaction networks
-- **Multiple planetary scenarios** (habitable zones, different star types, etc.)
-
-### `cosmicml.models`
-Physics-informed neural network implementations:
-- **PINN architecture** with physics loss terms
-- **Encoder/Decoder networks** for dimension reduction
-- **Constraint layers** enforcing chemical equations
-
-### `cosmicml.inference`
-Bayesian analysis tools:
-- **Likelihood functions** for spectroscopic data
-- **MCMC sampling** for posterior estimation
-- **Uncertainty quantification** for biosignature probabilities
-
-### `cosmicml.data`
-Data handling and preprocessing:
-- **JWST data pipeline** for real observations
-- **Synthetic data generation** with configurable parameters
-- **Normalization and feature engineering**
-
-## Computational Requirements
-
-- **Training on 10K atmospheres:** ~8-12 hours on NVIDIA A100 GPU
-- **Inference on single spectrum:** ~0.1 seconds
-- **Memory requirements:** 16GB RAM minimum; 32GB+ recommended for large batches
-
-## Key Publications & References
-
-This project builds on:
-- Raissi et al. (2019) - Physics-Informed Neural Networks
-- Kawashima et al. (2021) - Exoplanet atmosphere characterization
-- Madhusudhan et al. (2022) - Biosignature detection in transmission spectra
-
-## Contributing
-
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-Areas where help is needed:
-- Additional atmospheric chemistry modules
-- PINN architecture improvements
-- Real data pipelines for Keck and HST
-- Performance optimization for GPU clusters
-- Educational materials and tutorials
+- traceable instrument products and target-level train/test isolation;
+- a validated forward model with line-list, opacity, cloud, stellar-contamination,
+  and instrument-systematics provenance;
+- explicit detection hypotheses and non-biological alternative models;
+- simulation-based calibration and coverage checks under model misspecification;
+- comparison with established retrieval codes and blinded injections;
+- no “biosignature” conclusion from one molecule or one model posterior.
 
 ## Citation
 
-If you use CosmicML-Biodetect in your research, please cite:
+This is research software in active development, not a peer-reviewed detection
+paper. If you reuse the benchmark, cite the repository and an immutable release:
 
 ```bibtex
-@software{cosmicml2024,
-  title={CosmicML-Biodetect: Physics-Informed Neural Networks for Exoplanet Biosignature Detection},
-  author={Your Name and Contributors},
-  year={2024},
-  url={https://github.com/Biswajit1999/cosmicml-biodetect}
+@software{jana_cosmicml_biodetect_2026,
+  author  = {Biswajit Jana},
+  title   = {CosmicML-Biodetect: Synthetic Spectral-Amplitude Recovery Benchmark},
+  year    = {2026},
+  url     = {https://github.com/Biswajit1999/cosmicml-biodetect}
 }
 ```
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details
-
-## Contact & Support
-
-- **Documentation Issues:** Check [docs/](docs/)
-- **Bug Reports:** Create an [issue](https://github.com/Biswajit1999/cosmicml-biodetect/issues)
-- **Questions:** Start a [discussion](https://github.com/Biswajit1999/cosmicml-biodetect/discussions)
-
----
-
-**Last Updated:** 2024  
-**Status:** Active Development  
-**Collaboration:** Open to partnerships with astronomy groups and ML researchers
-
-## Research Quality Upgrade
-
-See [RESEARCH_QUALITY.md](RESEARCH_QUALITY.md) for the validation layer, reference anchors, equations and research boundaries added to this repository.
+MIT. See [`LICENSE`](LICENSE).
