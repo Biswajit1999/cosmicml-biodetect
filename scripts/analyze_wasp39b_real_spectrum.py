@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """Audit a published WASP-39 b JWST spectrum against supplied model curves."""
 
 from __future__ import annotations

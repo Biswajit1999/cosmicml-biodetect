@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """Run and publish the deterministic synthetic inverse benchmark."""
 
 from __future__ import annotations
