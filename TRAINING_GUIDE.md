@@ -1,4 +1,8 @@
-# CosmicML-Biodetect: Training Guide
+# Legacy PINN training guide
+
+> **Status:** Historical prototype instructions. The legacy training stack has
+> not been independently reproduced, its removed checkpoints lacked complete
+> provenance, and it is not the source of the validated results in the README.
 
 **Version:** 1.0  
 **Last Updated:** 2026-06-06

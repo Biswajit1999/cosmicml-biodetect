@@ -1,4 +1,8 @@
-# CosmicML-Biodetect API Reference
+# CosmicML-Biodetect API reference
+
+> **Status:** The supported evidence path is `cosmicml.benchmark`. Legacy PINN,
+> JWST, and Bayesian interfaces are experimental; unimplemented operations now
+> raise `NotImplementedError` rather than return fabricated data.
 
 **Version:** 1.0  
 **Last Updated:** 2026-06-06

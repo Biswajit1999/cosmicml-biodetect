@@ -1,6 +1,10 @@
-# CosmicML-Biodetect: Deployment Guide
+# Legacy prototype deployment guide
 
-**Status:** ✅ Production Ready  
+> **Status:** Historical design material only. No observational biosignature
+> model is approved for deployment. The validated artifact is an offline
+> synthetic benchmark and its model card explicitly excludes decision use.
+
+**Historical status label:** superseded; not production-ready
 **Version:** 1.0  
 **Last Updated:** 2026-06-06
 

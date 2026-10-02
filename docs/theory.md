@@ -1,4 +1,9 @@
-# Theory: Physics-Informed Neural Networks for Biosignature Detection
+# Theory: physics-informed neural networks and biosignatures
+
+> **Scope:** This is educational background, not a validated retrieval method.
+> The repository's reproduced result is the analytic template-emulator
+> benchmark described in `MODEL_CARD.md`. Placeholder PINN, Bayesian, and JWST
+> modules must not be read as demonstrated mission-data performance.
 
 This document explains the scientific and technical foundations of CosmicML-Biodetect.
 

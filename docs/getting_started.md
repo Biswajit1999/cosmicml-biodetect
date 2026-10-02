@@ -1,4 +1,9 @@
-# Getting Started with CosmicML-Biodetect
+# Legacy PINN prototype guide
+
+> **Status:** This document describes the unvalidated neural-network prototype.
+> Its historical commands and performance expectations are not evidence of
+> observed-data capability. For the maintained, CPU-only, reproduced workflow,
+> follow the repository `README.md` and `MODEL_CARD.md`.
 
 This guide will help you set up the project and run your first biosignature detection pipeline.
 
