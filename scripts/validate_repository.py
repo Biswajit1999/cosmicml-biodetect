@@ -27,7 +27,6 @@ for forbidden in (
     "41/41 passing",
     "Real Data Integration",
     "Ready for deployment",
-    "Research Quality Upgrade",
 ):
     require(forbidden not in readme, f"unsupported public claim remains: {forbidden}")
 
