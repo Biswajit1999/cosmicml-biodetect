@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this research software, please cite it using this metadata."
+title: "CosmicML-Biodetect | Exoplanet Spectrum Recovery Benchmark"
+abstract: "A reproducible synthetic molecular-feature recovery benchmark and a DOI-pinned audit of the published JWST WASP-39 b transmission spectrum by Biswajit Jana."
+type: software
+authors:
+  - family-names: Jana
+    given-names: Biswajit
+repository-code: "https://github.com/Biswajit1999/cosmicml-biodetect"
+url: "https://biswajit1999.github.io/cosmicml-biodetect/"
+keywords:
+  - "astronomy"
+  - "astrophysics"
+  - "scientific computing"
+  - "exoplanet science"
+  - "extrasolar planets"
+  - "planetary systems"
+  - "James Webb Space Telescope"
+  - "infrared astronomy"
+  - "space instrumentation"
